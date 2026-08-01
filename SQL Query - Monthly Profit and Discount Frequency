@@ -1,0 +1,70 @@
+In order to begin with the Excel section of the overarching superstore data analytics project, we must start with a query that effectively summarises the constructed data between profits and discount frequency.
+
+This is achieved by selecting:
+- Profits for total, as well as single categories, per month.
+- Demeaned profits, which find the difference between that month's profit and the average profit for the given calendar month.
+- Discount frequency per month.
+- Rankings for all of the above, ranked with highest value in 1st. 
+
+The given data is collected for the total sales in the month, as well as those specific to Furniture, Supplies, or Technology. 
+Providing a sufficient quantity of data will allow plenty of points of discussion, statistical analysis, and visualisation in the upcoming work. 
+
+The ultimate goal of this work is to explore and provide evidence for/against analytical intuition surrounding relationships between profit and discount frequency, as well as the proposed discount strategies that were suggested in the previous project. 
+
+
+QUERY:
+
+zWITH CTE AS (
+
+SELECT 
+MonthlyData.Month,
+MonthlyData.MonthlyProfits,
+ROUND(MonthlyData.MonthlyProfits - AVG(MonthlyData.MonthlyProfits) OVER (PARTITION BY SUBSTR(MonthlyData.Month, 6, 2)), 2) AS DemeanedMonthlyProfits, -- window function to get only the average for the month it is applied to (eg. july)
+MonthlyData.AverageDiscount, -- what is the average discount of an item, including 0 for those with no discount?
+ROUND(100.0*SUM(order_items.quantity * (order_items.discount != 0)) / MonthlySalesQuantity, 2) AS TotalDiscountRate, -- what percentage of items bought had a discount?
+
+DiscountOrdersData.FurnitureDiscountRate, -- how many furniture items were sold with a discount?
+MonthlyData.FurnitureProfits, -- just the profits from furniture
+ROUND(FurnitureProfits - AVG(FurnitureProfits) OVER (PARTITION BY SUBSTR(MonthlyData.Month, 6, 2)), 2) AS DemeanedFurnitureProfits, -- specifying for the specific category
+MonthlyData.FurnitureSales, -- just the sales from furniture
+
+DiscountOrdersData.SuppliesDiscountRate, -- how many supplies items were sold with a discount?
+MonthlyData.SuppliesProfits,
+ROUND(SuppliesProfits - AVG(SuppliesProfits) OVER (PARTITION BY SUBSTR(MonthlyData.Month, 6, 2)), 2) AS DemeanedSuppliesProfits, 
+MonthlyData.SuppliesSales,
+
+DiscountOrdersData.TechDiscountRate, -- how many technology items were sold with a discount?
+MonthlyData.TechProfits,
+ROUND(TechProfits - AVG(TechProfits) OVER (PARTITION BY SUBSTR(MonthlyData.Month, 6, 2)), 2) AS DemeanedTechProfits,
+MonthlyData.TechSales,
+
+ROW_NUMBER() OVER (ORDER BY MonthlyProfits DESC) ProfitsRank, -- what is the ranking of all months by their profitability?
+ROW_NUMBER() OVER (ORDER BY ROUND(100.0*SUM(order_items.quantity * (order_items.discount != 0)) / MonthlySalesQuantity, 2) DESC) DiscountsRank -- what is the ranking of all months by the probability of a discount being used? 
+
+
+FROM MonthlyData
+JOIN ordersAdj ON MonthlyData.Month = strftime('%Y-%m', ordersAdj.new_order_date)
+JOIN order_items ON ordersAdj.order_id = order_items.order_id
+JOIN DiscountOrdersData ON MonthlyData.Month = DiscountOrdersData.Month
+
+GROUP BY MonthlyData.Month)
+
+SELECT Month, 
+
+MonthlyProfits, ProfitsRank, 
+DemeanedMonthlyProfits, ROW_NUMBER() OVER (ORDER BY DemeanedMonthlyProfits DESC) AS DemeanedProfitsRank, -- ROW_NUMBER allows for there to be no skipped numbers and, if present in the data, no ties. 
+TotalDiscountRate, DiscountsRank,
+
+FurnitureProfits, ROW_NUMBER() OVER (ORDER BY FurnitureProfits DESC) AS FurnitureProfitsRank, -- all ROW_NUMBER will be descending to ensure consistency in the data
+DemeanedFurnitureProfits, ROW_NUMBER() OVER (ORDER BY DemeanedFurnitureProfits DESC) AS DemeanedFurnitureProfitsRank,
+FurnitureDiscountRate, ROW_NUMBER() OVER(ORDER BY FurnitureDiscountRate DESC) AS FurnitureDiscountRank,
+
+SuppliesProfits, ROW_NUMBER() OVER (ORDER BY SuppliesProfits DESC) AS SuppliesProfitsRank, -- category querying was sped up with the use of a locally-run Gemma 4 12B paramter model. 
+DemeanedSuppliesProfits, ROW_NUMBER() OVER (ORDER BY DemeanedSuppliesProfits DESC) AS DemeanedSuppliesProfitsRank,
+SuppliesDiscountRate, ROW_NUMBER() OVER(ORDER BY SuppliesDiscountRate DESC) AS SuppliesDiscountRank,
+
+TechProfits, ROW_NUMBER() OVER (ORDER BY TechProfits DESC) AS TechProfitsRank,
+DemeanedTechProfits, ROW_NUMBER() OVER (ORDER BY DemeanedTechProfits DESC) AS DemeanedTechProfitsRank,
+TechDiscountRate, ROW_NUMBER() OVER(ORDER BY TechDiscountRate DESC) AS TechDiscountRank
+
+FROM CTE
