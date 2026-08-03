@@ -6,31 +6,39 @@ p values will be calculated according to the null hypothesis, which claims that 
 Note that while the sheet did have automated values for all tables, this has been lost for some sections. 
 This is due to an error in saving keeping the file csv rather than xlsx.
 
+
 Below the original data, C59-M70, is the table showcasing the Pearson and Spearman coefficients for a given profit data and its discount data. 
 Pearson's coefficient is a linear test and compares the standard profit data and the standard discount frequency data.
 Spearman's coefficient is not inherently linear and compares the ranks of the profit and discount data. 
 
 By reframing the findings as a t-statistic, effectively asking how many standard deviations from the mean we lie, we may compute the p values.
-In this table, the p value is chosen to be 0.05, however due to the small sample size of n=48, a higher p value would also be suitable.
-A higher p value would result in greater false-positive rates, however this is smaller than the case of false negatives in this small a sample size.
-With a greater history of data, this would be more manageable, however it is a better solution than taking daily data due to the size of data and the inherently larger variance with day-to-day sales.
+In this table, the p value tolerance is chosen to be 0.05, however due to the small sample size of n=48, a higher tolerance would also be suitable.
+A higher tolerance would result in greater false-positive rates, however this is less of a concern when a small sample size of data also brings along the possibility of false negatives.
+The choice to keep p value tolerance as 0.05 comes from an understanding of industry standards and the risk of misleading the audience with uncommon changes.
+
+A solution to this issue with tolerance would be to take more points of data, such as daily profit data. 
+This creates its own risks, though, due to the increased variance in data points and the added complexity of creating a legible table and plot.
+Therefore, we keep tolerance = 0.05 for the case of monthly data.
 
 Next to the p value is a significance check, which returns "YES" if the p value is below 0.05.
 Included is also a check to see if the data remains significant after the Bonferroni correction. 
 Given a tolerance "x" and number of correlations checked "y", the Bonferroni correction conservatively defines significance as "p < x/y"
 
-The results have found that Spearman's was the lowest p value in 7 of the 8 correlations checked, with the only data with better Pearson's having a Pearson's p value of 0.625. This is far unsuitable for a correlation.
+
+The results have found that Spearman's was the lowest p value in 7 of the 8 correlations checked, with the only data with better Pearson's having a Pearson's p value of 0.625 - This is far unsuitable for a correlation.
+This is clear proof that profits and discounts are indeed correlated in a non-linear fashion (nature of non-linearity investigated through visualisation).
 Regular and demeaned monthly profits, as well as regular and demeaned furniture profits, all returned p < 0.05 for both Pearson and Spearman.
 However, only the demeaned data for both remained significant after Bonferroni corrections.
-This is clear proof that profits and discounts are indeed correlated in a non-linear fashion (nature of non-linearity investigated through visualisation).
+This reflects the heavy profit fluctuations between months, with demeaned data cleaning this issue via subtracting that calendar month's mean from the entry.
+While it may still be slightly imperfect and a percentage-based difference to the monthly mean would be more optimal, the change is not worthwhile and will lose the visual showcase of key months when it comes to visualisation.
 
 The Spearman coefficient and p values for demeaned total profits is -0.52 and 0.0001, and -0.47 and 0.0008 for demeaned furniture profits.
 These coefficients are close to my threshold for a "High" correlation of "c > 0.5", implying a very strong correlation.
-Using the previous findings during the SQL project that highest profit months were often lowest discount frequencies, this is a slight contradiction to that and shall be investigated in a month-by-month basis.
+Using the previous findings during the SQL project that highest profit months were often lowest discount frequencies, it is worth observing the month-by-month basis to observe whether key months are creating noise in the correlation.
 
-It is first of note to observe that while demeaned tech profits have no Pearson significance, it does have Spearman significance, even with the Bonferroni correction.
-Due to Pearson checking for linear relationships, this contradiction between coefficients and their p values is not a concern, telling about another correlation between technology.
-With both demeaned profit correlations being from tech and furniture, both quite valuable items, it appears that discounts form as a motivator for buyers to make that level of purchase, as long as it is done in a way that still presents a profit to the superstore.
+It is also of note to observe that while demeaned tech profits have no Pearson significance, it does have Spearman significance, even with the Bonferroni correction.
+Due to Pearson checking for linear relationships, this contradiction between coefficients and their p values is not a concern and simply enforces a non-linear correlation between technology and discount frequency.
+With both demeaned profit correlations being from tech and furniture, both quite valuable items, it appears that discounts benefit the superstore only as a motivator for buyers to make that level of purchase, as long as it is done in a way that still presents a profit to the superstore.
 When it is not done in focus of the profit, it ends up in a month such as 2015-01 with -3212 profit, -2945 of which from furniture sales.
 
 
@@ -44,7 +52,7 @@ In this report, we shall not consider typical thresholds as the data size is ina
 
 What we observe is that all months have a negative coefficient when comparing demeaned profit and their discount frequency. 
 This includes the months which I previously ruled out of January, November and December.
-September, however, lies in a small enough p value (0.94 Pearson p Value, 0.80 Spearman p Value) that correlation is quite unlikely here.
+September, however, lies in a high enough p value (0.94 Pearson p Value, 0.80 Spearman p Value) that correlation is quite unlikely here.
 
 The month-specific data, while heavily limited, shares an interesting adjustment to our devised discount strategies and is shown at C73-G85.
 They do also work for our key months, however September is limited - potentially a result of their higher frequency of supplies purchases, known to not have demeaned correlation with discount frequency. 
