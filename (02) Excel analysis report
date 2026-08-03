@@ -34,3 +34,25 @@ With both demeaned profit correlations being from tech and furniture, both quite
 When it is not done in focus of the profit, it ends up in a month such as 2015-01 with -3212 profit, -2945 of which from furniture sales.
 
 
+
+Looking into month-specific data, we must start with the limitation that 4 data values for each month results in a very broad t-statistic and, therefore, a very high p value for all.
+Monthly statistics cannot be used for true inference in most cases and must instead be used as simply a way to validate what we already see.
+Any months with data that aligns or misaligns with our current models must be investigated further, leveraged by the overarching correlations with all months.
+
+The month-specific data uses the demeaned data from each and determines the Pearson and Spearman coefficients, as well as their p values.
+In this report, we shall not consider typical thresholds as the data size is inadequate to rule out the possibility of errors.
+
+What we observe is that all months have a negative coefficient when comparing demeaned profit and their discount frequency. 
+This includes the months which I previously ruled out of January, November and December.
+September, however, lies in a small enough p value (0.94 Pearson p Value, 0.80 Spearman p Value) that correlation is quite unlikely here.
+
+The month-specific data, while heavily limited, shares an interesting adjustment to our devised discount strategies and is shown at C73-G85.
+They do also work for our key months, however September is limited - potentially a result of their higher frequency of supplies purchases, known to not have demeaned correlation with discount frequency. 
+While we cannot make true conclusions from our monthly data, the most likely outcome is that all months would benefit from having a discount strategy investigated.
+This discount strategy does not provide clear profit increases for office supplies, however it is their relatively small price that may help drive more customers to the superstore than expensive technology or infrequently purchased furniture.
+Overall, this should be investigated for a year or two, in specific superstores if this is a chain, to investigate the differences observed by applying these changes.
+
+To remind, our proposed discount strategy focuses on first-time customers (and all customers if chosen) to promote their frequency of order. 
+This is a strategy common in the restaurant and service industry, aware of their customer acquisition costs and the data surrounding their probability to return depending on how frequently they have ordered before.
+Superstores aren't directly applicable due to their reduced competition and increased likelihood for return, found in the SQL project to be approximately 98% of people returning. 
+Despite this, it is the understanding of psychological motivators in commercial application that it is likely to show benefits in frequency of order.
