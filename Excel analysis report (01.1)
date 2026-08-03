@@ -1,0 +1,36 @@
+Within the Excel File is the data collected from the SQL query.
+To help aid with month-specific data, data has been reorganised by month, using the "m" column.
+The objective is to investigate correlations more formally, using statistics to find correlation coefficients and p values to validate intuition.
+p values will be calculated according to the null hypothesis, which claims that there is no correlation between discount and profit.
+
+Note that while the sheet did have automated values for all tables, this has been lost for some sections. 
+This is due to an error in saving keeping the file csv rather than xlsx.
+
+Below the original data, C59-M70, is the table showcasing the Pearson and Spearman coefficients for a given profit data and its discount data. 
+Pearson's coefficient is a linear test and compares the standard profit data and the standard discount frequency data.
+Spearman's coefficient is not inherently linear and compares the ranks of the profit and discount data. 
+
+By reframing the findings as a t-statistic, effectively asking how many standard deviations from the mean we lie, we may compute the p values.
+In this table, the p value is chosen to be 0.05, however due to the small sample size of n=48, a higher p value would also be suitable.
+A higher p value would result in greater false-positive rates, however this is smaller than the case of false negatives in this small a sample size.
+With a greater history of data, this would be more manageable, however it is a better solution than taking daily data due to the size of data and the inherently larger variance with day-to-day sales.
+
+Next to the p value is a significance check, which returns "YES" if the p value is below 0.05.
+Included is also a check to see if the data remains significant after the Bonferroni correction. 
+Given a tolerance "x" and number of correlations checked "y", the Bonferroni correction conservatively defines significance as "p < x/y"
+
+The results have found that Spearman's was the lowest p value in 7 of the 8 correlations checked, with the only data with better Pearson's having a Pearson's p value of 0.625. This is far unsuitable for a correlation.
+Regular and demeaned monthly profits, as well as regular and demeaned furniture profits, all returned p < 0.05 for both Pearson and Spearman.
+However, only the demeaned data for both remained significant after Bonferroni corrections.
+This is clear proof that profits and discounts are indeed correlated in a non-linear fashion (nature of non-linearity investigated through visualisation).
+
+The Spearman coefficient and p values for demeaned total profits is -0.52 and 0.0001, and -0.47 and 0.0008 for demeaned furniture profits.
+These coefficients are close to my threshold for a "High" correlation of "c > 0.5", implying a very strong correlation.
+Using the previous findings during the SQL project that highest profit months were often lowest discount frequencies, this is a slight contradiction to that and shall be investigated in a month-by-month basis.
+
+It is first of note to observe that while demeaned tech profits have no Pearson significance, it does have Spearman significance, even with the Bonferroni correction.
+Due to Pearson checking for linear relationships, this contradiction between coefficients and their p values is not a concern, telling about another correlation between technology.
+With both demeaned profit correlations being from tech and furniture, both quite valuable items, it appears that discounts form as a motivator for buyers to make that level of purchase, as long as it is done in a way that still presents a profit to the superstore.
+When it is not done in focus of the profit, it ends up in a month such as 2015-01 with -3212 profit, -2945 of which from furniture sales.
+
+
